@@ -22,6 +22,16 @@
   - [Tipo Tuple](#tuple)
   - [Tipo Enum](#enum)
 - [Union de tipos](#union-de-tipos)
+- [Alias de tipos](#alias-de-tipos)
+- [Tipos literales](#tipos-literales)
+- [Aserciones de tipos](#aserciones-de-tipos)
+- [Funciones en TS](#funciones-en-ts)
+- [Interfaces](#interfaces)
+  - [Propiedades opcionales](#propiedades-opcionales)
+  - [Propiedades de solo lectura](#propiedades-de-solo-lectura)
+  - [Extendiendo interfaces](#extendiendo-interfaces)
+- [Clases](#clases)
+  - [Miembros publicos y privados](#miembros-publicos-y-privados)
 
 # Que es TypeScript
 
@@ -444,3 +454,442 @@ console.log(myStatus);
 
 - En TS se puede definir una variable con multiples tipos de datos: Union Type
 - Se usa el simbolo de pipe "|" entre los tipos
+
+```ts
+// Union de tipos
+let myNumber: number | string;
+myNumber = 9;
+myNumber = "nine";
+
+// Como podemos ver la union de tipos nos permite declarar
+// que cierta variable podra recibir diferentes tipos previamente
+// definidos
+
+let idUser: number | string;
+idUser = "10";
+
+const getUserNameById = (id: number | string) => {
+  return "Jofay";
+};
+
+getUserNameById(9);
+getUserNameById("9");
+```
+
+# Alias de tipos
+
+[Index](#index)
+
+- TS permite crear un alias como nuevo nombre para tipo
+- El alias se puede aplicar tambien a un conjunto o combinacion de tipos
+- Se usa la palabra reservada type
+
+```ts
+// Alias de tipos
+
+type UserId = number | string;
+type UserName = string;
+
+let idUser: UserId;
+idUser = "10";
+
+const getUserNameById = (id: UserId): UserName => {
+  return "Jofay";
+};
+
+getUserNameById(9);
+getUserNameById("9");
+```
+
+# Tipos literales
+
+[Index](#index)
+
+- Una variable con un tipo literal puede contener unicamente una cadena del conjunto.
+- Se usan cadenas como "tipos", combinados con el simbolo de pipe "|" entre ellos
+
+```ts
+// Tipos literales
+
+type SquareSize = "100x100" | "500x500" | "1000x1000";
+
+// let myPhotoProfile: SquareSize = "200x200"
+// <-- Error ya que este valor no es parte del tipo
+let myPhotoProfile: SquareSize = "500x500";
+const myBackground: SquareSize = "1000x1000";
+```
+
+# Aserciones de Tipos
+
+[Index](#index)
+
+- Cuando el programador puede conocer mas que TS sobre el valor de una variable.
+- Usa dos sintaxis:
+
+```
+<AngleBracket> and (Variable as type)
+```
+
+```ts
+// Aserciones de tipo
+
+// <>
+const myCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
+
+// as
+const otherCanvas = <HTMLCanvasElement>document.getElementById("main_canvas");
+```
+
+Cuando TS no sabe que tipo esta manejando se puede hacer uso de las aserciones, las cuales le dicen al compilador que tipo de dato es el que esta usando. En el ejemplo de arriba TS no sabe que tipo le esta trayendo el getElementById y es por esto que nosotros se lo especificamos.
+
+> Ahora entiendo mejor el [meme](#any)
+
+# Funciones en TS
+
+[Index](#index)
+
+- Los parametros en las funciones son tipados
+- Se peuden definir parametros opcionales
+- El tipo de retorno puede ser un tipo basico, enum, alias, tipo literal o una combinacion de ellos.
+
+## Parametro opcional
+
+Cuando declaramos una funcion le podemos pasar parametros opcionales, los cuales a la hora de ser llamada la funcion no es necesario declararlo. Este se declara poniendo el signo "?" en frente del parametro.
+
+```ts
+// Funciones en TS
+
+type SquareSize = "100x100" | "500x500" | "1000x1000";
+
+const createPicture = (
+  title: string,
+  date: Date,
+  size: SquareSize,
+  authorName?: string // Usando un parametro opcional
+) => {
+  return {
+    title,
+    date,
+    size,
+    authorName,
+  };
+};
+
+const firstPicture = createPicture(
+  "El cuadrito",
+  new Date(),
+  "1000x1000"
+  // En este punto tendriamos un error por no declarar el
+  // ultimo parametro, pero esto no sucede por haberlo definido
+  // como opcional
+);
+
+console.log(firstPicture);
+```
+
+## Tipo de retorno con TS
+
+```ts
+function handleError(code: number, message: string): never | string {
+  if (message === "error") {
+    throw new Error(`Error: ${message}. Error-code:${code}`);
+  } else {
+    return "An error has ocurred";
+  }
+}
+try {
+  let result = handleError(200, "Ok");
+  console.log(result);
+  result = handleError(404, "error");
+  console.log(result);
+} catch (error) {}
+```
+
+# Interfaces
+
+[Index](#index)
+
+Las interfaces en TS constituyen una forma poderosa de definir "contratos" tanto para tu proyecto, como para el codigo externo del mismo
+
+```ts
+//Interfaces
+
+enum PhotoOrientation {
+  Landscape,
+  Portrait,
+  Square,
+  Panorama,
+}
+
+interface Picture {
+  title: string;
+  date: Date;
+  orientation: PhotoOrientation;
+}
+
+const showPicture = (picture: Picture) => {
+  console.log(`Your picture have the next features:
+  - Title: ${picture.title}
+  - Publication date: ${picture.date}
+  - Size: ${picture.orientation}`);
+};
+
+let myPicture = {
+  title: "jaja",
+  date: new Date(),
+  orientation: PhotoOrientation.Panorama,
+};
+
+showPicture(myPicture);
+```
+
+## Propiedades opcionales
+
+[Index](#index)
+
+Para definir propiedades opcionales es de la misma forma que lo hicimos en [Parametro opcional de una funcion](#parametro-opcional)
+
+En el siguiente ejemplo te lo demuestro:
+
+```ts
+type Author = {
+  userName: string;
+  userLastName: string;
+  age: number;
+};
+
+enum Status {
+  Aprobado,
+  Rechazado,
+  Pendiente,
+}
+
+interface Research {
+  // Declaramos description y budget como opcionales
+  description?: string;
+  budget?: number;
+  leadBy: Author;
+  researchStatus: Status;
+}
+
+const registerResearch = (research: Research) => {
+  return research;
+};
+
+const myUser: Author = {
+  userName: "Jofay",
+  userLastName: "zs",
+  age: 16,
+};
+
+const test = registerResearch({
+  leadBy: myUser,
+  researchStatus: Status.Aprobado,
+});
+
+console.log(test);
+```
+
+## Propiedades de solo lectura
+
+[Index](#index)
+
+Algunas propiedades de la interfaz podrian no ser modificables una vez creado el objeto. Esto es posible usando readonly antes del nombre de propiedad.
+
+readonly nos permite definir una propiedad, la cual una vez definida su valor no podra ser cambiado.
+
+```ts
+type Author = {
+  userName: string;
+  userLastName: string;
+  age: number;
+};
+
+enum Status {
+  Aprobado,
+  Rechazado,
+  Pendiente,
+}
+
+interface Research {
+  // Definimos que la descripcion sera readonly
+  readonly description?: string;
+  budget?: number;
+  leadBy: Author;
+  researchStatus: Status;
+}
+
+let myUser: Author = {
+  userName: "Jofay",
+  userLastName: "zs",
+  age: 16,
+};
+
+let notEditable: Research = {
+  description: "This is a short description about my new research",
+  budget: 45000,
+  leadBy: myUser,
+  researchStatus: Status.Pendiente,
+};
+
+console.log(notEditable);
+
+// Esta linea de codigo resultara en un error, ya que la propiedad
+// description fue previamente definida como readonly.
+// notEditable.description =
+//   "I change my description, because I didn't like the previous one";
+
+// En este caso no tenemos error, ya que budget no fue definido como readonly
+notEditable.budget = 90000;
+
+console.log(notEditable);
+```
+
+## Extendiendo interfaces
+
+[Index](#index)
+
+Las interfaces pueden extenderse unas de otras. Esto permite copiar los miembros ya definidos en una interfaz a otra, ganando flexibilidad y reusabilidad de componentes.
+
+```ts
+enum TypesOfArt {
+  Painting,
+  Sculpture,
+  Architecture,
+  Music,
+  Dance,
+  Coding,
+}
+
+type Author = {
+  userName: string;
+  userLastName?: string;
+  age?: number;
+};
+
+interface Art {
+  artName: string;
+  artType: TypesOfArt;
+  artAuthor: Author;
+}
+
+interface Painting extends Art {
+  size: string;
+  sold: boolean;
+  predominantColor: number;
+}
+
+interface Music extends Art {
+  instruments: string[];
+}
+
+const Devorack: Author = {
+  userName: "Devorack",
+};
+
+// Este bloque de codigo sacara un error, ya que le faltan
+// las propiedades extendidas por Art
+
+// let firstMusic: Music = {
+//   instruments: [],
+// };
+
+let firstMusic: Music = {
+  instruments: ["every instrument", "that you can play", "at the opera"],
+  artName: "Symphony No.9",
+  artType: TypesOfArt.Music,
+  artAuthor: Devorack,
+};
+
+console.log(firstMusic);
+```
+
+# Clases
+
+[Index](#index)
+
+```ts
+// Clases
+enum TypesOfArt {
+  Painting = "Painting",
+  Sculpture = "Sculpture",
+  Architecture = "Architecture",
+  Music = "Music",
+  Dance = "Dance",
+  Coding = "Coding",
+}
+
+class Art {
+  artName: string;
+  artType: TypesOfArt;
+  artAuthor: string;
+
+  constructor(artName: string, artType: TypesOfArt, artAuthor: string) {
+    (this.artName = artName),
+      (this.artType = artType),
+      (this.artAuthor = artAuthor);
+  }
+
+  showMyArt() {
+    return `Hi, my name is ${this.artAuthor} and today I will show you a ${this.artType} type art, its name is ${this.artName}`;
+  }
+}
+
+const sun = new Art("Sun", TypesOfArt.Painting, "Pepe");
+console.log(sun.showMyArt());
+```
+
+## Miembros publicos y privados
+
+[Index](#index)
+
+TS define un modificador de acceso publico por defecto para los miembros de clase. Tambien es posible marcar un miembro como publico usando la palabra reservada public.
+
+TS define una manera propia de declarar o marcar un miembro como privado usando la palabra reservada private. TS tambien soporta la sintaxis para miembros privados: #attribute, esta caracteristica puede ofrecer mejores grantias de aislamiento en miembros privados.
+
+```ts
+// Clases
+enum TypesOfArt {
+  Painting = "Painting",
+  Sculpture = "Sculpture",
+  Architecture = "Architecture",
+  Music = "Music",
+  Dance = "Dance",
+  Coding = "Coding",
+}
+
+class Art {
+  // Declaramos artName como privado
+  private artName: string;
+  #artType: TypesOfArt;
+  artAuthor: string;
+
+  constructor(artName: string, artType: TypesOfArt, artAuthor: string) {
+    (this.artName = artName),
+      (this.#artType = artType),
+      (this.artAuthor = artAuthor);
+  }
+
+  showMyArt() {
+    return `Hi, my name is ${this.artAuthor} and today I will show you a ${
+      this.#artType
+    } type art, its name is ${this.artName}`;
+  }
+}
+
+const sun = new Art("Sun", TypesOfArt.Painting, "Pepe");
+
+// La siguiente linea de codigo nos dara un error, ya que estamos tratando de acceder a una
+// propiedad privada
+// sun.artName = "Moon"; // private.
+
+// La siguiente linea tambien daria un error, ya que lo definimos como privado
+// sun.#artType = TypesOfArt.Sculpture; // private
+
+sun.artAuthor = "Antonio"; // public
+
+// En este caso estamos tratando de acceder a las propiedades de sun. Esta nos devolvera
+// artAuthor ya que es publica y artName, porque la definimos como private. En cambio
+// no nos sera devuelto #artType, porque fue definida con la sintaxis: #attribute
+console.log(sun); // Art { artName: 'Sun', artAuthor: 'Antonio' }
+```
