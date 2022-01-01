@@ -11,36 +11,33 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _Art_artType;
-// Clases
-var TypesOfArt;
-(function (TypesOfArt) {
-    TypesOfArt["Painting"] = "Painting";
-    TypesOfArt["Sculpture"] = "Sculpture";
-    TypesOfArt["Architecture"] = "Architecture";
-    TypesOfArt["Music"] = "Music";
-    TypesOfArt["Dance"] = "Dance";
-    TypesOfArt["Coding"] = "Coding";
-})(TypesOfArt || (TypesOfArt = {}));
-class Art {
-    constructor(artName, artType, artAuthor) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Art = void 0;
+const item_1 = require("./item");
+const enums_1 = require("./enums");
+class Art extends item_1.Item {
+    constructor(id, artName, artType, artAuthor) {
+        super(id, artName);
         _Art_artType.set(this, void 0);
-        (this.artName = artName),
-            (__classPrivateFieldSet(this, _Art_artType, artType, "f")),
-            (this.artAuthor = artAuthor);
+        __classPrivateFieldSet(this, _Art_artType, artType, "f");
+        this.artAuthor = artAuthor;
+    }
+    get getArtType() {
+        return __classPrivateFieldGet(this, _Art_artType, "f");
+    }
+    set setArtType(artType) {
+        __classPrivateFieldSet(this, _Art_artType, artType, "f");
+    }
+    get getArtAuthor() {
+        return this.artAuthor;
+    }
+    set setArtAuthor(artAuthor) {
+        this.artAuthor = artAuthor;
     }
     showMyArt() {
         return `Hi, my name is ${this.artAuthor} and today I will show you a ${__classPrivateFieldGet(this, _Art_artType, "f")} type art, its name is ${this.artName}`;
     }
 }
+exports.Art = Art;
 _Art_artType = new WeakMap();
-const sun = new Art("Sun", TypesOfArt.Painting, "Pepe");
-console.log(sun.showMyArt());
-// La siguiente linea de codigo nos dara un error, ya que estamos tratando de acceder a una
-// propiedad privada
-// sun.artName = "Moon"; // private.
-// La siguiente linea tambien daria un error, ya que lo definimos como privado
-// sun.#artType = TypesOfArt.Sculpture; // private
-sun.artAuthor = "Antonio"; // public
-console.log(sun.showMyArt());
-// En este caso estamos tratando de acceder a las propiedades de sun 
-console.log(sun);
+Art.typeOfArt = enums_1.TypesOfArt;

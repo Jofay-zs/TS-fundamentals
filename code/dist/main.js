@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const art_1 = require("./art");
+const enums_1 = require("./enums");
+let adventure = new art_1.Art("21hj3h1", "adventure", enums_1.TypesOfArt.Painting, "Anonimo");
+console.log(adventure.showMyArt());
+console.log(adventure);
+adventure.setArtAuthor = "Lorenzo";
+adventure.setArtName = "Bridge";
+adventure.setArtType = enums_1.TypesOfArt.Architecture;
+console.log(adventure);

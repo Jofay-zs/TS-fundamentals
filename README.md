@@ -1,6 +1,10 @@
-# Curso de Fundamentos de TypeScript
+# Fundamentos de TypeScript
 
 ![wallpaper of TypeScript](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-images-1.medium.com%2Fmax%2F2000%2F1*i0qclSPNcjj8cWOPr3wLxg.png&f=1&nofb=1)
+
+## Acerca del repositorio
+
+En este repositorio podras encontrar las notas y codigos que fui realizando durante mi aprendizaje de TS. La mayoria del contenido lo obtuve de [Platzi](https://platzi.com/clases/typescript/) y de la [documentacion oficial de TS](https://www.typescriptlang.org/).
 
 ## Index
 
@@ -32,6 +36,11 @@
   - [Extendiendo interfaces](#extendiendo-interfaces)
 - [Clases](#clases)
   - [Miembros publicos y privados](#miembros-publicos-y-privados)
+  - [Metodos Set y Get](#metodos-set-y-get)
+  - [Herencia de clases y miembros protegidos](#herencia-de-clases-y-miembros-protegidos)
+  - [Clases abstractas](#clases-abstractas)
+  - [Propiedades estaticas y propiedades de solo lectura](#propiedades-estaticas-y-propiedades-de-solo-lectura)
+- [Modulos](#modulos)
 
 # Que es TypeScript
 
@@ -861,6 +870,7 @@ enum TypesOfArt {
 class Art {
   // Declaramos artName como privado
   private artName: string;
+  // Declaramos artType como privado con la sintaxis #attribute
   #artType: TypesOfArt;
   artAuthor: string;
 
@@ -893,3 +903,380 @@ sun.artAuthor = "Antonio"; // public
 // no nos sera devuelto #artType, porque fue definida con la sintaxis: #attribute
 console.log(sun); // Art { artName: 'Sun', artAuthor: 'Antonio' }
 ```
+
+## Metodos Set y Get
+
+[Index](#index)
+
+TS soporta los metodos accesores set y get como una forma de interceptar los accesos a los miembros privados de un objeto.
+
+```ts
+// Clases
+enum TypesOfArt {
+  Painting = "Painting",
+  Sculpture = "Sculpture",
+  Architecture = "Architecture",
+  Music = "Music",
+  Dance = "Dance",
+  Coding = "Coding",
+}
+
+class Art {
+  private artName: string;
+  #artType: TypesOfArt;
+  artAuthor: string;
+
+  constructor(artName: string, artType: TypesOfArt, artAuthor: string) {
+    (this.artName = artName),
+      (this.#artType = artType),
+      (this.artAuthor = artAuthor);
+  }
+
+  get getArtName() {
+    return this.artName;
+  }
+  set setArtName(artName: string) {
+    this.artName = artName;
+  }
+
+  get getArtType() {
+    return this.#artType;
+  }
+  set setArtType(artType: TypesOfArt) {
+    this.#artType = artType;
+  }
+
+  get getArtAuthor() {
+    return this.artAuthor;
+  }
+  set setArtAuthor(artAuthor: string) {
+    this.artAuthor = artAuthor;
+  }
+
+  showMyArt() {
+    return `Hi, my name is ${this.artAuthor} and today I will show you a ${
+      this.#artType
+    } type art, its name is ${this.artName}`;
+  }
+}
+
+const sun = new Art("Sun", TypesOfArt.Painting, "Pepe");
+
+console.log(sun.getArtName);
+
+sun.setArtName = "Moon";
+
+console.log(sun.showMyArt());
+```
+
+## Herencia de clases y miembros protegidos
+
+[Index](#index)
+
+```ts
+// Clases
+enum TypesOfArt {
+  Painting = "Painting",
+  Sculpture = "Sculpture",
+  Architecture = "Architecture",
+  Music = "Music",
+  Dance = "Dance",
+  Coding = "Coding",
+}
+
+class Item {
+  // Con protected definimos un atributo como privado, pero este puede ser usado
+  // por las subclases
+  protected id: string;
+  protected artName: string;
+
+  constructor(id: string, artName: string) {
+    (this.id = id), (this.artName = artName);
+  }
+
+  get getId() {
+    return this.id;
+  }
+  set setId(id: string) {
+    this.id = id;
+  }
+
+  get getArtName() {
+    return this.artName;
+  }
+  set setArtName(artName: string) {
+    this.artName = artName;
+  }
+}
+
+class Art extends Item {
+  #artType: TypesOfArt;
+  artAuthor: string;
+
+  constructor(
+    id: string,
+    artName: string,
+    artType: TypesOfArt,
+    artAuthor: string
+  ) {
+    super(id, artName);
+    this.#artType = artType;
+    this.artAuthor = artAuthor;
+  }
+
+  get getArtType() {
+    return this.#artType;
+  }
+  set setArtType(artType: TypesOfArt) {
+    this.#artType = artType;
+  }
+
+  get getArtAuthor() {
+    return this.artAuthor;
+  }
+  set setArtAuthor(artAuthor: string) {
+    this.artAuthor = artAuthor;
+  }
+
+  showMyArt() {
+    return `Hi, my name is ${this.artAuthor} and today I will show you a ${
+      this.#artType
+    } type art, its name is ${this.artName}`;
+  }
+}
+
+const sun = new Art("dhajishdy12398", "Sun", TypesOfArt.Painting, "Pepe");
+
+console.log(sun.getArtName);
+```
+
+## Clases abstractas
+
+[Index](#index)
+
+Son la base de donde otras clases podrian derivarse. A diferencia de una interfaz, una clase abstracta puede implementar funciones para sus instancias.
+
+```ts
+// Definimos la clase como abstracta
+abstract class Item {
+  protected id: string;
+  protected artName: string;
+
+  constructor(id: string, artName: string) {
+    (this.id = id), (this.artName = artName);
+  }
+
+  get getId() {
+    return this.id;
+  }
+  set setId(id: string) {
+    this.id = id;
+  }
+
+  get getArtName() {
+    return this.artName;
+  }
+  set setArtName(artName: string) {
+    this.artName = artName;
+  }
+}
+
+// La siguiente linea de codigo nos entregara un error ya que como la clase Item fue
+// preivamente definida como abstract, no es posible instanciarla
+const myItem = new Item("1290asd123", "Lemon");
+```
+
+## Propiedades estaticas y propiedades de solo lectura
+
+[Index](#index)
+
+A traves de la palabra reservada _**static**_ se puede definir un miembro visible a nivel de clase.
+
+Podemos usar la palabra reservada **_readonly_** para marcar el miembro de una clase como solo lectura.
+
+```ts
+// Clases
+enum TypesOfArt {
+  Painting = "Painting",
+  Sculpture = "Sculpture",
+  Architecture = "Architecture",
+  Music = "Music",
+  Dance = "Dance",
+  Coding = "Coding",
+}
+
+abstract class Item {
+  protected readonly id: string;
+  protected artName: string;
+
+  constructor(id: string, artName: string) {
+    (this.id = id), (this.artName = artName);
+  }
+
+  get getId() {
+    return this.id;
+  }
+  // Tendriamos un error en esta linea, ya que previamente definimos el
+  // id como una propiedad de solo lectura.
+  // set setId(id: string) {
+  //   this.id = id;
+  // }
+
+  get getArtName() {
+    return this.artName;
+  }
+  set setArtName(artName: string) {
+    this.artName = artName;
+  }
+}
+
+class Art extends Item {
+  // Definimos nuestro miembro estatico
+  static typeOfArt = TypesOfArt;
+
+  #artType: TypesOfArt;
+  artAuthor: string;
+
+  constructor(
+    id: string,
+    artName: string,
+    artType: TypesOfArt,
+    artAuthor: string
+  ) {
+    super(id, artName);
+    this.#artType = artType;
+    this.artAuthor = artAuthor;
+  }
+
+  get getArtType() {
+    return this.#artType;
+  }
+  set setArtType(artType: TypesOfArt) {
+    this.#artType = artType;
+  }
+
+  get getArtAuthor() {
+    return this.artAuthor;
+  }
+  set setArtAuthor(artAuthor: string) {
+    this.artAuthor = artAuthor;
+  }
+
+  showMyArt() {
+    return `Hi, my name is ${this.artAuthor} and today I will show you a ${
+      this.#artType
+    } type art, its name is ${this.artName}`;
+  }
+}
+
+// Probando el miembro estatico
+console.log(Art.typeOfArt);
+```
+
+# Modulos
+
+[Index](#index)
+
+En TS los modulos proveen un mecanismo para una mejor organizacion del codigo y promueven su reutilizacion.
+
+Con la palabra reservada **_export_** podemos exportar un bloque de codigo para que este pueda ser usado en otros archivos. Y con la palabra **_import_** podemos importar ese bloque de codigo que fue exportado, es decir podemos traer ese bloque de codigo que fue exportado y utilizarlo en nuestro archivo.
+
+### Exportando
+
+```ts
+// A continuacion estare exportando tanto las dos clases que ya
+// hemos creado y el enumerador, para de tal forma poder usarlos en
+// otros archivos
+
+export enum TypesOfArt {
+  Painting = "Painting",
+  Sculpture = "Sculpture",
+  Architecture = "Architecture",
+  Music = "Music",
+  Dance = "Dance",
+  Coding = "Coding",
+}
+
+export abstract class Item {
+  protected readonly id: string;
+  protected artName: string;
+
+  constructor(id: string, artName: string) {
+    (this.id = id), (this.artName = artName);
+  }
+
+  get getId() {
+    return this.id;
+  }
+
+  get getArtName() {
+    return this.artName;
+  }
+  set setArtName(artName: string) {
+    this.artName = artName;
+  }
+}
+
+export class Art extends Item {
+  static typeOfArt = TypesOfArt;
+
+  #artType: TypesOfArt;
+  artAuthor: string;
+
+  constructor(
+    id: string,
+    artName: string,
+    artType: TypesOfArt,
+    artAuthor: string
+  ) {
+    super(id, artName);
+    this.#artType = artType;
+    this.artAuthor = artAuthor;
+  }
+
+  get getArtType() {
+    return this.#artType;
+  }
+  set setArtType(artType: TypesOfArt) {
+    this.#artType = artType;
+  }
+
+  get getArtAuthor() {
+    return this.artAuthor;
+  }
+  set setArtAuthor(artAuthor: string) {
+    this.artAuthor = artAuthor;
+  }
+
+  showMyArt() {
+    return `Hi, my name is ${this.artAuthor} and today I will show you a ${
+      this.#artType
+    } type art, its name is ${this.artName}`;
+  }
+}
+```
+
+### Importando
+
+```ts
+// Importando la clase y el enumerador hechos en el archivo myFirstProject
+import { Art, TypesOfArt } from "./myFirstProject";
+
+let adventure = new Art("21hj3h1", "adventure", TypesOfArt.Painting, "Anonimo");
+
+// Probando la instancia de nuestra clase importada
+console.log(adventure.showMyArt());
+console.log(adventure);
+adventure.setArtAuthor = "Lorenzo";
+adventure.setArtName = "Bridge";
+adventure.setArtType = TypesOfArt.Architecture;
+console.log(adventure);
+```
+
+# Principio de responsabilidad unica
+
+Idealmente, un archivo deberia tener un proposito o **responsabilidad unica**. Esto mejora la legibilidad del codigo, facilita la lectura, testing y mantenimiento.
+
+Si entras a la carpeta donde se encuentran los codigos podras apreciar, que se creo un archivo para cada uno de las clases o enumeradores.
+
+[art.ts](code\src\art.ts) para la clase _Art_, [item.ts](code\src\item.ts) para la clase _item_ y [enums.ts](code\src\enums.ts) para todos los enumeradoeres en este caso se encuentra _TypesOfArt_
