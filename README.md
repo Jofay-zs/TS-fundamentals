@@ -41,6 +41,9 @@ En este repositorio podras encontrar las notas y codigos que fui realizando dura
   - [Clases abstractas](#clases-abstractas)
   - [Propiedades estaticas y propiedades de solo lectura](#propiedades-estaticas-y-propiedades-de-solo-lectura)
 - [Modulos](#modulos)
+  - [Principio de responsabilidad unica](#principio-de-responsabilidad-unica)
+  - [Resolviendo modulos](#resolviendo-modulos)
+  - [Webpack y agrupacion de modulos](#webpack-y-agrupacion-de-modulos)
 
 # Que es TypeScript
 
@@ -1275,8 +1278,97 @@ console.log(adventure);
 
 # Principio de responsabilidad unica
 
+[Index](#index)
+
 Idealmente, un archivo deberia tener un proposito o **responsabilidad unica**. Esto mejora la legibilidad del codigo, facilita la lectura, testing y mantenimiento.
 
 Si entras a la carpeta donde se encuentran los codigos podras apreciar, que se creo un archivo para cada uno de las clases o enumeradores.
 
 [art.ts](code\src\art.ts) para la clase _Art_, [item.ts](code\src\item.ts) para la clase _item_ y [enums.ts](code\src\enums.ts) para todos los enumeradoeres en este caso se encuentra _TypesOfArt_
+
+# Resolviendo modulos
+
+[Index](#index)
+
+TS resuelve la ubicacion de modulos observando referencias relativas y no relativas. Posteriormente intenta localizar el modulo usando una estrategia de resolucion de modulos.
+
+# Webpack y agrupacion de modulos
+
+[Index](#index)
+
+Webpack se considera un empaquetador de modulos, para poder usar webpack dentro de nuestro proyecto debemos de tener un archibo package.json. Con webpack podremos optimizar nuestro codigo y utilizarlo en otros lugares, como el navegador.
+
+Para añadir el package.json podemos usar uno de los siguientes codigos.
+
+```
+npm init o yarn init
+// Creara un package.json y te pedira los valores iniciales del archibo
+```
+
+```
+npm init -y o yarn init -y
+// Creara un package.json con los valores inicales por defecto
+```
+
+Y para instalar webpack podemos usar alguno de los siguientes comandos
+
+```
+npm install typescript webpack webpack-cli
+```
+
+```
+yarn add typescript webpack webpack-cli
+```
+
+Una vez instaladas estas cosas debemos de crear un archivo con el nombre de **webpack.config.js**, el cual debe contener lo siguiente:
+
+```
+module.exports = {
+  mode: "production", // Modo de ejecucion
+  entry: "./src/main.ts", // El punto de entrada para webpack
+  devtool: "inline-source-map",
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  // resolve: Extensiones que soporta nuestro proyecto
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  // output: Indica el nombre de nuestro archivo resultante
+  output: {
+    filename: "bundle.js",
+  },
+};
+```
+
+Con esto ya solo nos falta definir un script en el package.json para poder ejecutar webpack en nuestro proyecto. Para esto en la seccion de scripts agregamos una propiedad que diga lo siguiente **"build": "webpack"**. Se veria algo asi:
+
+```
+{
+  "name": "code",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  }
+}
+```
+
+Una vez finalizado todo esta configuracion podemos ejecutar **yarn build** o **npm run build**.
+
+Si ejecutaste esto podras ver que en la carpeta _dist_ se creo un archivo con el nombre de bundle.js. Este lo puedes ejecutar en la consola (node bundle.js) o bien en el navegador.
+
+Para ejecutarlo en el navegador debemos de [crear un archivo html como este](code/index.html). Con un archivo como el de ejemplo, si lo abrimos en el navegador y abrimos la consola podemos ver los resultados esperados.

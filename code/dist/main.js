@@ -2,10 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const art_1 = require("./art");
 const enums_1 = require("./enums");
+const show_1 = require("./show");
 let adventure = new art_1.Art("21hj3h1", "adventure", enums_1.TypesOfArt.Painting, "Anonimo");
+const clowns = new art_1.Art("123123jks", "clowns", enums_1.TypesOfArt.Dance, "Joker");
 console.log(adventure.showMyArt());
 console.log(adventure);
 adventure.setArtAuthor = "Lorenzo";
 adventure.setArtName = "Bridge";
 adventure.setArtType = enums_1.TypesOfArt.Architecture;
 console.log(adventure);
+let opening = new show_1.Show();
+opening.addArt(adventure);
+opening.addArt(clowns);
+console.log(opening);
+opening.removeArt(adventure);
+console.log(opening);
